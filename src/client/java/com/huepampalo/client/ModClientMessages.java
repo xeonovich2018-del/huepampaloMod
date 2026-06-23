@@ -8,10 +8,10 @@ public class ModClientMessages {
     public static void chatMessageAfterTeleport(ServerPlayer player, int teleportCount) {
 
         if (teleportCount < 10) {
-            player.sendSystemMessage(Component.literal("Вы телепортировались впервые!"));
+            player.sendSystemMessage(Component.literal("Вы ..."));
         } else if (teleportCount > 100) {
-            player.sendSystemMessage(Component.literal("Вы телепортировались " + teleportCount + " раз!"));
+            player.sendSystemMessage(Component.literal("Вы АУУУ ... " + teleportCount + " раз!"));
         }
-        player.sendSystemMessage(Component.literal("Телепортации: " + teleportCount));
+        player.sendSystemMessage(Component.literal("Телепорт ии ии я . . .: " + teleportCount));
     }
 }

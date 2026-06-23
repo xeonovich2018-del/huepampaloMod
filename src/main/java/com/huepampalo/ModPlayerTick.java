@@ -1,7 +1,6 @@
 package com.huepampalo;
 
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -71,10 +70,21 @@ public class ModPlayerTick {
                 if (hit.getType() == HitResult.Type.BLOCK) {
                     Vec3 target = hit.getLocation();
 
+                    // Блок с шансами телепортации (10% — вверх, 90% — на точку)
+                    if (new java.util.Random().nextInt(100) < 10) {
+                        performRandomTeleport(player, target);
+
+                    } else {
+                        // 90% шанс — обычный телепорт на блок, куда смотришь
+                        player.teleportTo(target.x, target.y + 1.0, target.z);
+                        ModCounters.addTeleportCounter();
+                        ModServerInteractions.chatMessageAfterTeleport(player, ModCounters.getTeleportCounter());
+                    }
                     // Телепортируем игрока
-                    player.teleportTo(target.x, target.y + 1.0, target.z);
-                    ModCounters.addTeleportCounter();
-                    ModServerMessages.chatMessageAfterTeleport(player, ModCounters.getTeleportCounter());
+                    // player.teleportTo(target.x, target.y + 1.0, target.z);
+                    // ModCounters.addTeleportCounter();
+                    // ModServerMessages.chatMessageAfterTeleport(player,
+                    // ModCounters.getTeleportCounter());
 
                     // player.sendSystemMessage(Component.literal("Телепортации: " +
                     // teleportCount));
@@ -93,6 +103,31 @@ public class ModPlayerTick {
         // Логгирование
 
         // тут логгирование сколько раз вызвана команда
+
+    }
+
+    private static void performRandomTeleport(ServerPlayer player, Vec3 target) {
+        java.util.Random random = new java.util.Random();
+        int chance = random.nextInt(100);
+
+        // 2% шанс — телепорт вверх на 100 блоков
+        if (chance < 2) {
+            player.teleportTo(player.getX(), player.getY() + 100, player.getZ());
+            ModCounters.addTeleportCounter();
+            ModServerInteractions.chatMessageAfterTeleport(player, ModCounters.getTeleportCounter(),
+                    "Где я?!");
+        }
+
+        if (chance >= 2 && chance < 5 || ModCounters.getTeleportCounter() > 100) {
+            // 3% шанс при 100+ — телепорт вниз на 50 блоков
+            player.teleportTo(player.getX(), player.getY() - 50, player.getZ());
+            ModCounters.addTeleportCounter();
+            ModServerInteractions.chatMessageAfterTeleport(player, ModCounters.getTeleportCounter(),
+                    "Ты доигрался... Ничего не проходит бесследно.");
+        } else {
+            // 90% шанс — обычный телепорт на блок
+            player.teleportTo(target.x, target.y + 1.0, target.z);
+        }
 
     }
 

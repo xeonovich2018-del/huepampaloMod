@@ -4,11 +4,47 @@
     "layer0": "huepampalo-mod:item/huepampalo_item"
   },
   "overrides": [
-    { "predicate": { "custom_model_data": 1 }, "model": "huepampalo-mod:item/huepampalo_item_1" },
-    { "predicate": { "custom_model_data": 2 }, "model": "huepampalo-mod:item/huepampalo_item_2" },
-    { "predicate": { "custom_model_data": 3 }, "model": "huepampalo-mod:item/huepampalo_item_3" },
-    { "predicate": { "custom_model_data": 4 }, "model": "huepampalo-mod:item/huepampalo_item_4" },
-    { "predicate": { "custom_model_data": 5 }, "model": "huepampalo-mod:item/huepampalo_item_5" },
-    { "predicate": { "custom_model_data": 6 }, "model": "huepampalo-mod:item/huepampalo_item_6" }
+       {
+      "predicate": {
+        "custom_model_data": 0
+      },
+      "model": "huepampalo-mod:item/huepampalo_dice_model_1"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 1
+      },
+      "model": "huepampalo-mod:item/huepampalo_dice_model_1"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 2
+      },
+      "model": "huepampalo-mod:item/huepampalo_dice_model_2"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 3
+      },
+      "model": "huepampalo-mod:item/huepampalo_dice_model_3"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 4
+      },
+      "model": "huepampalo-mod:item/huepampalo_dice_model_4"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 5
+      },
+      "model": "huepampalo-mod:item/huepampalo_dice_model_5"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 6
+      },
+      "model": "huepampalo-mod:item/huepampalo_dice_model_6"
+    }
   ]
 }
