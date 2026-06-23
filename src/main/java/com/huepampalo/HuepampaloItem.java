@@ -4,11 +4,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
@@ -31,6 +33,9 @@ public class HuepampaloItem extends Item {
     public HuepampaloItem(Properties properties) {
         super(properties);
     }
+
+    private static final ResourceLocation LAST_HAND_SLOT = ResourceLocation.fromNamespaceAndPath("huepampalo",
+            "last_hand_slot");
 
     // USE
     @Override
@@ -186,5 +191,40 @@ public class HuepampaloItem extends Item {
         lightning.setPos(pos.getX() + 0.5 + offsetX, pos.getY(), pos.getZ() + 0.5 + offsetZ);
         lightning.setCause(cause);
         level.addFreshEntity(lightning);
+    }
+
+    @Override
+    public void inventoryTick(ItemStack stack, Level level, Entity entity,
+            int slot, boolean selected) {
+
+        // Механика переброса кости при выборе кости в слот
+
+        if (level.isClientSide)
+            return;
+        if (!(entity instanceof ServerPlayer player))
+            return;
+
+        CustomData customData = stack.getOrDefault(
+                DataComponents.CUSTOM_DATA,
+                CustomData.EMPTY);
+
+        CompoundTag tag = customData.copyTag();
+
+        boolean wasSelected = tag.getBoolean("WasSelected");
+
+        // Предмет только что взяли в руку
+        if (selected && !wasSelected) {
+
+            int newFace = level.random.nextInt(6) + 1;
+
+            tag.putInt("DiceFace", newFace);
+            stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
+            stack.set(DataComponents.CUSTOM_MODEL_DATA,
+                    new CustomModelData(newFace));
+
+        }
+
+        tag.putBoolean("WasSelected", selected);
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
     }
 }
