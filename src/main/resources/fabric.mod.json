@@ -18,6 +18,9 @@
 		"main": [
 			"com.huepampalo.HuepampaloMod"
 		],
+		"fabric-datagen": [ 
+      		"com.huepampalo.docs.datagen.ModDataGenerator"
+    	],
 		"client": [
 			"com.huepampalo.client.HuepampaloModClient"
 		]

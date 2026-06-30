@@ -3,6 +3,12 @@ plugins {
 	id 'maven-publish'
 }
 
+fabricApi {
+	configureDataGeneration() {
+		client = true
+	}
+}
+
 version = project.mod_version
 group = project.maven_group
 
@@ -23,6 +29,16 @@ loom {
 			sourceSet sourceSets.client
 		}
 	}
+
+	runs {
+        datagen {
+            client()
+
+            vmArg "-Dfabric-api.datagen=true"
+            vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}"
+            vmArg "-Dfabric-api.datagen.modid=huepampalo-mod"
+        }
+    }
 
 }
 
@@ -85,3 +101,4 @@ publishing {
 		// retrieving dependencies.
 	}
 }
+

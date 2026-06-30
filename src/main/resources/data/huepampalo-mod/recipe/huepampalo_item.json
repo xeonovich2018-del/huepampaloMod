@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "   ",
+    " B ",
+    "   "
+  ],
+  "key": {
+    "B": {
+      "item": "huepampalo-mod:venom_block"
+    }
+  },
+  "result": {
+    "id": "huepampalo-mod:huepampalo_item",
+    "count": 1
+  }
+}

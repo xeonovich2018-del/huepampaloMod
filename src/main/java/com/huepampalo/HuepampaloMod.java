@@ -1,18 +1,48 @@
 package com.huepampalo;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
+import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+
+import javax.xml.catalog.CatalogFeatures.Feature;
+
+import org.intellij.lang.annotations.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.huepampalo.blocks.ModBlocks;
+import com.huepampalo.worldgen.ModWorldGen;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+
+import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.features.OreFeatures;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.OreFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
+import net.minecraft.world.level.levelgen.placement.*;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.VerticalAnchor;
+import net.minecraft.world.level.levelgen.placement.CountPlacement;
+import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
+import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 public class HuepampaloMod implements ModInitializer {
 	public static final String MOD_ID = "huepampalo-mod";
@@ -24,6 +54,82 @@ public class HuepampaloMod implements ModInitializer {
 
 	public static final Item HUEPAMPALO_ITEM = new HuepampaloItem(
 			new Item.Properties().stacksTo(1));
+
+	private void registerVenomOre() {
+
+		// Registry.register(Registries.CONFIGURED_FEATURE, configuredKey,
+		// new ConfiguredFeature<>(
+		// net.minecraft.world.level.levelgen.feature.Feature.ORE,
+		// new OreConfiguration(null, 0)));
+
+		// BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(),
+		// GenerationStep.Decoration.UNDERGROUND_ORES,
+		// placedKey);
+
+		// // 1. Регистрируем Configured Feature
+		// Registry.register(Registries.CONFIGURED_FEATURE, configuredKey,
+		// new ConfiguredFeature<>(
+		// Feature.ORE,
+		// new OreConfiguration(
+		// OreConfiguration.target(OreConfiguration.ORE_REPLACEABLES,
+		// ModBlocks.VENOM_BLOCK.defaultBlockState()),
+		// 9)));
+
+		// // 2. Регистрируем Placed Feature
+		// Registry.register(Registries.PLACED_FEATURE, placedKey,
+		// new PlacedFeature(
+		// configuredKey,
+		// List.of(
+		// CountPlacement.of(5),
+		// InSquarePlacement.spread(),
+		// HeightRangePlacement.uniform(VerticalAnchor.aboveBottom(15),
+		// VerticalAnchor.absolute(65)),
+		// BiomePlacement.INSTANCE)));
+
+		// 3. Добавляем в биомы
+		// BiomeModifications.addFeature(
+		// BiomeSelectors.foundInOverworld(),
+		// GenerationStep.Decoration.UNDERGROUND_ORES,
+		// placedKey);
+
+		// public static final RegistryKey<PlacedFeature> CUSTOM_ORE_PLACED_KEY =
+		// RegistryKey.of(RegistryKeys.PLACED_FEATURE,
+		// Identifier.of("tutorial","ore_custom"));
+
+		// // Configured Feature
+		// Registry.register(
+		// (Registry<ConfiguredFeature<?, ?>>) Registries.CONFIGURED_FEATURE,
+		// configuredKey,
+		// new ConfiguredFeature<>(
+		// Feature.ORE,
+		// new OreConfiguration(
+		// OreConfiguration.target(OreConfiguration.ORE_REPLACEABLES,
+		// ModBlocks.VENOM_BLOCK.defaultBlockState()),
+		// 9)));
+
+		// // Placed Feature
+		// Registry.register(
+		// (Registry<PlacedFeature>) Registries.PLACED_FEATURE,
+		// placedKey,
+		// new PlacedFeature(
+		// configuredKey,
+		// List.of(
+		// CountPlacement.of(5),
+		// InSquarePlacement.spread(),
+		// HeightRangePlacement.uniform(VerticalAnchor.aboveBottom(15),
+		// VerticalAnchor.absolute(65)),
+		// BiomePlacement.INSTANCE)));
+
+		// BiomeModifications.addFeature(
+		// BiomeSelectors.foundInOverworld(),
+		// GenerationStep.Decoration.UNDERGROUND_ORES,
+		// placedKey);
+
+		BiomeModifications.addFeature(
+				BiomeSelectors.foundInOverworld(),
+				GenerationStep.Decoration.UNDERGROUND_ORES,
+				ModPlacedFeatures.VENOM_ORE);
+	}
 
 	@Override
 	public void onInitialize() {
@@ -53,6 +159,51 @@ public class HuepampaloMod implements ModInitializer {
 
 		ModBlocks.register();
 		ModItems.register();
+
+		registerVenomOre();
+		// WorldGeneration.generate();
+		// ModWorldGen.register();
+
+		// BiomeModifications.addFeature(
+		// BiomeSelectors.foundInOverworld(),
+		// GenerationStep.Decoration.UNDERGROUND_ORES,
+		// ModPlacedFeatures.VENOM_BLOCK_KEY);
+		// BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(),
+		// Feature.UNDERGROUND_ORES, ModOrePlacedFeatures.ORE_RUBY);
+
+		// registerVenomOre();
+
+		// ModFeatures.register();
+
+		// BiomeModifications.addFeature(
+		// BiomeSelectors.foundInOverworld(),
+		// GenerationStep.Decoration.UNDERGROUND_ORES,
+		// ResourceKey.create(
+		// Registries.PLACED_FEATURE,
+		// HuepampaloMod.id("venom_ore")));
+
+		// System.out.println("Huepampalo Mod initialized with simple ore generation!");
+
+		// Простая генерация Venom Block (самый надёжный способ)
+		// BiomeModifications.addFeature(
+		// BiomeSelectors.foundInOverworld(),
+		// GenerationStep.Decoration.UNDERGROUND_ORES,
+		// ResourceKey.create(
+		// Registries.PLACED_FEATURE,
+		// HuepampaloMod.id("venom_ore")));
+
+		// System.out.println("Venom Block simple generation added!");
+
+		// BiomeModifications.addFeature(
+		// BiomeSelectors.foundInOverworld(),
+		// GenerationStep.Decoration.UNDERGROUND_ORES,
+		// ModPlacedFeatures.VENOM_PLACED);
+
+		// BiomeModifications.addFeature(
+		// BiomeSelectors.foundInOverworld(),
+		// GenerationStep.Decoration.UNDERGROUND_ORES,
+		// ModPlacedFeatures.VENOM_PLACED_KEY);
+
 	}
 
 	// CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess,
