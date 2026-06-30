@@ -9,7 +9,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
 
 import java.util.List;
@@ -25,6 +24,9 @@ public class ModConfiguredFeatures {
         List<OreConfiguration.TargetBlockState> targets = List.of(
                 OreConfiguration.target(
                         new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES),
+                        ModBlocks.VENOM_BLOCK.defaultBlockState()),
+                OreConfiguration.target(
+                        new TagMatchTest(BlockTags.DEEPSLATE_ORE_REPLACEABLES),
                         ModBlocks.VENOM_BLOCK.defaultBlockState()));
 
         FeatureUtils.register(

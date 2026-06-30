@@ -10,8 +10,6 @@ import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.*;
 
-import java.util.List;
-
 public class ModPlacedFeatures {
 
         public static final ResourceKey<PlacedFeature> VENOM_ORE = ResourceKey.create(
