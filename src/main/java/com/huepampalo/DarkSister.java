@@ -1,9 +1,11 @@
 package com.huepampalo;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.TickTask;
@@ -37,6 +39,44 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class DarkSister extends SwordItem implements GeoItem {
 
+    public static final Map<Player, Boolean> charging = new HashMap<>();
+
+    private static final List<ParticleOptions> LIGHTNING_PARTICLES = List.of(
+            // ParticleTypes.CRIT,
+            ParticleTypes.ENCHANT,
+            // ParticleTypes.ELECTRIC_SPARK,
+            // ParticleTypes.END_ROD,
+            // ParticleTypes.SOUL_FIRE_FLAME,
+            // ParticleTypes.DRAGON_BREATH,
+
+            // боевые
+            // ParticleTypes.SWEEP_ATTACK,
+            // ParticleTypes.DAMAGE_INDICATOR,
+            // ParticleTypes.HAPPY_VILLAGER,
+
+            // магические
+            ParticleTypes.PORTAL,
+            ParticleTypes.REVERSE_PORTAL,
+            // ParticleTypes.WITCH,
+            ParticleTypes.ENCHANTED_HIT,
+
+            // огонь / энергия
+            // ParticleTypes.FLAME,
+            // ParticleTypes.SMALL_FLAME,
+            // ParticleTypes.LAVA,
+            ParticleTypes.HEART
+
+    // дым / тьма
+    // ParticleTypes.LARGE_SMOKE,
+    // ParticleTypes.SMOKE,
+    // ParticleTypes.WHITE_ASH,
+
+    // взрыв / удар
+    // ParticleTypes.EXPLOSION,
+    // ParticleTypes.EXPLOSION_EMITTER,
+    // ParticleTypes.POOF
+    );
+
     private void spawnParticlesAttack(
             Level level,
             Player player,
@@ -57,8 +97,16 @@ public class DarkSister extends SwordItem implements GeoItem {
              * ПАРТИКЛЫ
              */
 
+            ParticleOptions particle1 = LIGHTNING_PARTICLES.get(
+                    serverLevel.random.nextInt(
+                            LIGHTNING_PARTICLES.size()));
+
+            ParticleOptions particle2 = LIGHTNING_PARTICLES.get(
+                    serverLevel.random.nextInt(
+                            LIGHTNING_PARTICLES.size()));
+
             serverLevel.sendParticles(
-                    ParticleTypes.ENCHANTED_HIT,
+                    particle1,
                     pos.x,
                     pos.y,
                     pos.z,
@@ -69,7 +117,7 @@ public class DarkSister extends SwordItem implements GeoItem {
                     0.02);
 
             serverLevel.sendParticles(
-                    ParticleTypes.ENCHANT,
+                    particle2,
                     pos.x,
                     pos.y,
                     pos.z,
@@ -103,7 +151,7 @@ public class DarkSister extends SwordItem implements GeoItem {
                 target.hurt(
                         serverLevel.damageSources()
                                 .playerAttack(player),
-                        12F);
+                        50F);
 
                 /*
                  * небольшой отлет
@@ -279,6 +327,7 @@ public class DarkSister extends SwordItem implements GeoItem {
         return true;
     }
 
+    // Основное использование
     @Override
     public InteractionResultHolder<ItemStack> use(
             Level level,
@@ -300,7 +349,7 @@ public class DarkSister extends SwordItem implements GeoItem {
     @Override
     public UseAnim getUseAnimation(ItemStack stack) {
 
-        return UseAnim.BLOCK;
+        return UseAnim.NONE;
     }
 
     /*
@@ -317,6 +366,18 @@ public class DarkSister extends SwordItem implements GeoItem {
 
         if (!level.isClientSide()
                 && livingEntity instanceof Player player) {
+            int dice = getDiceFace(player);
+
+            if (dice == 1) {
+                player.addEffect(
+                        new MobEffectInstance(
+                                MobEffects.SLOW_FALLING,
+                                10,
+                                2,
+                                false,
+                                false,
+                                false));
+            }
 
             player.addEffect(
                     new MobEffectInstance(
@@ -326,6 +387,7 @@ public class DarkSister extends SwordItem implements GeoItem {
                             false,
                             false,
                             false));
+
         }
     }
 
@@ -343,8 +405,11 @@ public class DarkSister extends SwordItem implements GeoItem {
         if (!(entity instanceof Player player))
             return;
 
-        player.removeEffect(
-                MobEffects.MOVEMENT_SPEED);
+        // player.removeEffect(
+        // MobEffects.MOVEMENT_SPEED);
+
+        // player.removeEffect(
+        // MobEffects.SLOW_FALLING);
 
         if (!level.isClientSide()) {
 
@@ -382,6 +447,8 @@ public class DarkSister extends SwordItem implements GeoItem {
                 // spawnLightningWave(level, player);
 
                 spawnParticlesAttack(level, player, 20);
+                // player.removeEffect(
+                // MobEffects.SLOW_FALLING);
             }
 
             /*

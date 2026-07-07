@@ -9,9 +9,11 @@ import com.mojang.math.Axis;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.Random;
 
@@ -93,57 +95,98 @@ public class ItemInHandRendererMixin {
 
             if (player.isUsingItem()) {
 
+                if (darkSisterUseTime > 0.5F) {
+
+                    Vec3 pos = player.getEyePosition()
+                            .add(player.getLookAngle().scale(0.8));
+
+                    player.level().addParticle(
+                            ParticleTypes.ENCHANT,
+                            pos.x,
+                            pos.y,
+                            pos.z,
+                            0,
+                            0.05,
+                            0);
+                }
+
                 if (!darkSisterUsing) {
 
                     darkSisterUsing = true;
                     darkSisterUseTime = 0F;
                 }
 
-                darkSisterUseTime += 0.05F;
+                // скорость зарядки
+                darkSisterUseTime += 0.035F;
 
                 if (darkSisterUseTime > 1F) {
-
                     darkSisterUseTime = 1F;
                 }
 
+                /*
+                 * плавная кривая
+                 */
+
                 float charge = (float) Math.sin(
-                        darkSisterUseTime *
-                                Math.PI *
-                                0.5F);
+                        darkSisterUseTime * Math.PI * 0.5F);
 
                 /*
-                 * уход назад
+                 * подвод катаны назад
                  */
 
                 poseStack.translate(
-                        0,
-                        0.05F * charge,
-                        0.35F * charge);
+                        0.0F,
+                        0.08F * charge,
+                        0.45F * charge);
 
                 /*
-                 * подготовка разворота
+                 * разворот в боевую стойку
                  */
 
                 poseStack.mulPose(
                         Axis.YP.rotationDegrees(
-                                90F * charge));
+                                110F * charge));
 
                 poseStack.mulPose(
                         Axis.ZP.rotationDegrees(
-                                -25F * charge));
+                                -40F * charge));
 
                 /*
-                 * энергия клинка
+                 * небольшой наклон вверх
                  */
 
-                float shake = (float) Math.sin(
-                        darkSisterUseTime * 20F)
-                        * 2F
+                poseStack.mulPose(
+                        Axis.XP.rotationDegrees(
+                                -15F * charge));
+
+                /*
+                 * энергия вокруг клинка
+                 * усиливается к концу зарядки
+                 */
+
+                float energy = darkSisterUseTime * 30F;
+
+                float shake = (float) Math.sin(energy)
+                        * 2.5F
                         * charge;
 
                 poseStack.mulPose(
                         Axis.XP.rotationDegrees(
                                 shake));
+
+                /*
+                 * легкое движение вперед-назад
+                 */
+
+                float breathe = (float) Math.sin(
+                        darkSisterUseTime * 8F)
+                        * 0.03F
+                        * charge;
+
+                poseStack.translate(
+                        0,
+                        breathe,
+                        0);
 
             } else {
 
